@@ -1,0 +1,5 @@
+person.troy_dack:
+  device_trackers:
+    - device_tracker.troy_s_iphone
+    - device_tracker.troy_s_apple_watch
+

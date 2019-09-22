@@ -1,0 +1,92 @@
+- id: '1568207070562'
+  alias: Morning Light
+  trigger:
+  - at: 07:00:00
+    platform: time
+  condition: []
+  action:
+  - data:
+      entity_id: light.desk_light
+    service: light.turn_on
+  - delay: 00:30:00
+  - data:
+      entity_id: light.desk_light
+    service: light.turn_off
+- id: '1568207497694'
+  alias: Sync power state on HA start-up
+  trigger:
+  - event: start
+    platform: homeassistant
+  condition: []
+  action:
+  - data:
+      payload: ''
+      topic: sonoffs/cmd/state
+    service: mqtt.publish
+- id: '1568207692297'
+  alias: Sonoff Firmware Installed
+  trigger:
+  - event: start
+    platform: homeassistant
+  condition: []
+  action:
+  - data:
+      payload: '2'
+      topic: sonoffs/cmd/status
+    service: mqtt.publish
+- id: '1568325496599'
+  alias: Set HA theme for day and night
+  trigger:
+  - event: start
+    platform: homeassistant
+  - event: sunrise
+    platform: sun
+  - event: sunset
+    platform: sun
+  action:
+  - service_template: frontend.set_theme
+    data_template:
+      name: "{% if states.sun.sun.state == \"above_horizon\" %}\n  Light - Blue\n\
+        {% else %}\n  Dark - Blue\n{% endif %}\n"
+- id: '1568728637752'
+  alias: Enable MQTT discovery for all devices
+  trigger:
+    platform: homeassistant
+    event: start
+  action:
+  - service: mqtt.publish
+    data:
+      topic: sonoffs/cmnd/SetOption19
+      payload: '1'
+- id: '1568894298681'
+  alias: Evening Lights
+  trigger:
+  - at: '18:00'
+    platform: time
+  condition: []
+  action:
+  - device_id: 303980dea1db452ea1e7de7797376e49
+    domain: light
+    entity_id: light.lounge_lights
+    type: turn_on
+  - device_id: 78e793c4fbb14ea3a7aaa4f4dee7b3bc
+    domain: light
+    entity_id: light.bedroom_light
+    type: turn_on
+  - device_id: be22de6b1adb461f8dbd7d397f0ba76d
+    domain: light
+    entity_id: light.desk_light
+    type: turn_on
+  - delay: 04:00
+  - device_id: 78e793c4fbb14ea3a7aaa4f4dee7b3bc
+    domain: light
+    entity_id: light.bedroom_light
+    type: turn_off
+  - device_id: 303980dea1db452ea1e7de7797376e49
+    domain: light
+    entity_id: light.lounge_lights
+    type: turn_off
+  - device_id: be22de6b1adb461f8dbd7d397f0ba76d
+    domain: light
+    entity_id: light.desk_light
+    type: turn_off
